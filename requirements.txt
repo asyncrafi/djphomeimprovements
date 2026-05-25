@@ -1,0 +1,11 @@
+asgiref==3.11.1
+certifi==2026.5.20
+charset-normalizer==3.4.7
+Django==6.0.5
+idna==3.16
+python-dotenv==1.2.2
+requests==2.34.2
+resend==2.30.1
+sqlparse==0.5.5
+typing_extensions==4.15.0
+urllib3==2.7.0
