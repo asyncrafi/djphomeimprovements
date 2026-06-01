@@ -72,3 +72,8 @@ class ContactForm(forms.Form):
             }
         ),
     )
+    honeypot = forms.CharField(
+        required=False,
+        widget=forms.HiddenInput,
+        label='',
+    )

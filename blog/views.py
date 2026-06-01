@@ -1,5 +1,5 @@
 import logging
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from .forms import ContactForm
 from .utils import send_contact_emails
 
@@ -11,6 +11,9 @@ def home(request):
     error_message = None
 
     if request.method == "POST":
+        if request.POST.get("honeypot"):
+            return redirect("/")
+
         form = ContactForm(request.POST)
         if form.is_valid():
             try:
@@ -39,7 +42,7 @@ def home(request):
 
     return render(
         request,
-        "index.html",
+        "blog/index.html",
         {
             "form": form,
             "success_message": success_message,

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+import re
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,8 +29,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-#e2by(&^&efjkw0_ay1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DJANGO_DEBUG', 'True').strip().lower() in ('1', 'true', 'yes')
 
-allowed_hosts = os.getenv('DJANGO_ALLOWED_HOSTS')
-ALLOWED_HOSTS = allowed_hosts.split() if allowed_hosts else []
+allowed_hosts = os.getenv('DJANGO_ALLOWED_HOSTS', '')
+# Accept space- or comma-separated host lists in the env var
+ALLOWED_HOSTS = [h.strip() for h in re.split(r"[,\s]+", allowed_hosts) if h.strip()]
 
 
 # Application definition
@@ -131,10 +133,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
-# Static 
 
+# Use leading slashes so URLs are absolute in templates
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
 
-STATIC_URL = "static/"
-MEDIA_URL = "media/"
+# Project-level static files directory (for development)
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
