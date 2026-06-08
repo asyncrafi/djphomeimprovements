@@ -88,6 +88,10 @@ RESEND_API_KEY = os.getenv('RESEND_API_KEY', '')
 RESEND_EMAIL_FROM = os.getenv('RESEND_EMAIL_FROM', DEFAULT_FROM_EMAIL)
 RESEND_EMAIL_TO = os.getenv('RESEND_EMAIL_TO', 'Enquire@djphomeimprovements.co.uk')
 
+RECAPTCHA_SITE_KEY = os.getenv('RECAPTCHA_SITE_KEY', 'your-site-key-here')
+RECAPTCHA_SECRET_KEY = os.getenv('RECAPTCHA_SECRET_KEY', 'your-secret-key-here')
+RECAPTCHA_SCORE_THRESHOLD = float(os.getenv('RECAPTCHA_SCORE_THRESHOLD', '0.5'))  # below this = bot
+
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases

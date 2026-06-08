@@ -1,9 +1,28 @@
 import logging
+import requests
 from django.shortcuts import redirect, render
+from django.conf import settings
 from .forms import ContactForm
 from .utils import send_contact_emails
 
 logger = logging.getLogger(__name__)
+
+
+def verify_recaptcha(token):
+    try:
+        response = requests.post(
+            'https://www.google.com/recaptcha/api/siteverify',
+            data={
+                'secret': settings.RECAPTCHA_SECRET_KEY,
+                'response': token,
+            },
+            timeout=5,
+        )
+        result = response.json()
+        return result.get('success') and result.get('score', 0) >= settings.RECAPTCHA_SCORE_THRESHOLD
+    except Exception as exc:
+        logger.error("reCAPTCHA verification failed: %s", exc)
+        return False
 
 
 def home(request):
@@ -13,6 +32,16 @@ def home(request):
     if request.method == "POST":
         if request.POST.get("honeypot"):
             return redirect("/")
+
+        recaptcha_token = request.POST.get("g-recaptcha-response")
+        if not recaptcha_token or not verify_recaptcha(recaptcha_token):
+            error_message = "We couldn't verify your submission. Please try again."
+            form = ContactForm(request.POST)
+            return render(request, "blog/index.html", {
+                "form": form,
+                "error_message": error_message,
+                "RECAPTCHA_SITE_KEY": settings.RECAPTCHA_SITE_KEY,
+            })
 
         form = ContactForm(request.POST)
         if form.is_valid():
@@ -47,5 +76,6 @@ def home(request):
             "form": form,
             "success_message": success_message,
             "error_message": error_message,
+            "RECAPTCHA_SITE_KEY": settings.RECAPTCHA_SITE_KEY,
         },
     )

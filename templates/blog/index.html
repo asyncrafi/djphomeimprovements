@@ -15,6 +15,7 @@
       href="{% static 'blog/images/favicon.svg' %}"
     />
     <link rel="stylesheet" href="{% static 'blog/css/style.css' %}" />
+    <script src="https://www.google.com/recaptcha/api.js?render={{ RECAPTCHA_SITE_KEY }}" async defer></script>
   </head>
   <body>
     <nav>
@@ -526,6 +527,22 @@
         if (e.target === modal) {
           modal.style.display = "none";
         }
+      });
+    </script>
+    <script>
+      document.getElementById('contactForm')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        grecaptcha.ready(function() {
+          grecaptcha.execute('{{ RECAPTCHA_SITE_KEY }}', {action: 'contact'}).then(function(token) {
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'g-recaptcha-response';
+            input.value = token;
+            form.appendChild(input);
+            form.submit();
+          });
+        });
       });
     </script>
   </body>
